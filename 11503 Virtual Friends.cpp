@@ -6,63 +6,66 @@ using namespace std;
 
 struct people {
 
-    int t;
-    string g;
+	int t;
+	string g;
 }p;
 
 unordered_map<string, people> friends;
 
 string getRoot(string s) {
 
-    if(friends[s].g == s) { return s; }
-    else {
+	if (friends[s].g == s) { return s; }
+	else {
 
-        return friends[s].g = getRoot(friends[s].g);
-    }
+		return friends[s].g = getRoot(friends[s].g);
+	}
 }
 
 int main() {
 
-    int T, F;
-    string a, b;
+	ios::sync_with_stdio(false);
+	cin.tie(0);
 
-    cin >> T;
+	int T, F;
+	string a, b;
 
-    for(int i = 0; i < T; ++i) {
+	cin >> T;
 
-        cin >> F;
-        friends.clear();
+	for (int i = 0; i < T; ++i) {
 
-        for(int j = 0; j < F; ++j) {
+		cin >> F;
+		friends.clear();
 
-            cin >> a >> b;
+		for (int j = 0; j < F; ++j) {
 
-            if(friends.find(a) == friends.end()) {
+			cin >> a >> b;
 
-                p.t = 1;
-                p.g = a;
-                friends[a] = p;
-            }
+			if (friends.find(a) == friends.end()) {
 
-            if(friends.find(b) == friends.end()) {
+				p.t = 1;
+				p.g = a;
+				friends[a] = p;
+			}
 
-                p.t = 1;
-                p.g = b;
-                friends[b] = p;
-            }
+			if (friends.find(b) == friends.end()) {
 
-            a = getRoot(a);
-            b = getRoot(b);
-            friends[b].g = a;
+				p.t = 1;
+				p.g = b;
+				friends[b] = p;
+			}
 
-            if(a != b) {
+			a = getRoot(a);
+			b = getRoot(b);
+			
+			if (a != b) {
 
-                friends[a].t += friends[b].t;
-            }
+				friends[b].g = a;
+				friends[a].t += friends[b].t;
+			}
 
-            cout << friends[a].t << '\n';
-        }
-    }
+			cout << friends[a].t << '\n';
+		}
+	}
 
-    return 0;
+	return 0;
 }
