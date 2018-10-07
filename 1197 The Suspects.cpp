@@ -3,16 +3,46 @@
 
 using namespace std;
 
-struct student {
+class disjointSet {
 
-	int g, t;
-}students[30000];
+	struct student {
 
-int getRoot(int i) {
+		int g, t;
+	}S[30000];
 
-	if (students[i].g == i) { return i; }
-	else { return students[i].g = getRoot(students[i].g); }
-}
+public:
+	inline void init(int n) {
+
+		for (int i = 0; i < n; ++i) {
+
+			S[i].g = i;
+			S[i].t = 1;
+		}
+	}
+
+	inline int find(int s) {
+
+		if (S[s].g == s) { return s; }
+		else { return S[s].g = find(S[s].g); }
+	}
+
+	inline void unit(int a, int b) {
+
+		a = find(a), b = find(b);
+		if (a > b) { swap(a, b); }
+
+		if (a != b) {
+
+			S[b].g = a;
+			S[a].t += S[b].t;
+		}
+	}
+
+	inline int getSuspect() {
+
+		return S[0].t;
+	}
+}djs;
 
 int main() {
 
@@ -23,11 +53,7 @@ int main() {
 
 	while (cin >> n >> m && !(n == 0 && m == 0)) {
 
-		for (int i = 0; i < n; ++i) {
-
-			students[i].g = i;
-			students[i].t = 1;
-		}
+		djs.init(n);
 
 		for (int i = 0; i < m; ++i) {
 
@@ -35,20 +61,12 @@ int main() {
 
 			for (int j = 1; j < k; ++j) {
 
-				cin >> b;				
-				a = getRoot(a);
-				b = getRoot(b);
-				if (a > b) { swap(a, b); }
-
-				if (a != b) {
-					
-					students[b].g = a;
-					students[a].t += students[b].t;
-				}
+				cin >> b;
+				djs.unit(a, b);
 			}
 		}
 
-		cout << students[0].t << '\n';
+		cout << djs.getSuspect() << '\n';
 	}
 
 	return 0;

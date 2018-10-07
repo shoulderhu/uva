@@ -4,22 +4,51 @@
 
 using namespace std;
 
-struct people {
+class disjointSet {
 
-	int t;
-	string g;
-}p;
+	struct people {
 
-unordered_map<string, people> friends;
+		int t;
+		string g;
+	}peo;
+	string A, B;
+	unordered_map<string, people> P;
 
-string getRoot(string s) {
+public:
 
-	if (friends[s].g == s) { return s; }
-	else {
+	inline void init() {
 
-		return friends[s].g = getRoot(friends[s].g);
+		P.clear();
 	}
-}
+
+	inline void check(const string &p) {
+
+		if (P.find(p) == P.end()) {
+
+			peo.g = p, peo.t = 1;
+			P[p] = peo;
+		}
+	}
+
+	inline string find(const string &p) {
+
+		if (P[p].g == p) { return p; }
+		else { return P[p].g = find(P[p].g); }
+	}
+
+	inline int unit(const string &a, const string &b) {
+
+		A = find(a), B = find(b);
+
+		if (A != B) {
+
+			P[B].g = A;
+			P[A].t += P[B].t;
+		}
+
+		return P[A].t;
+	}
+}djs;
 
 int main() {
 
@@ -34,36 +63,14 @@ int main() {
 	for (int i = 0; i < T; ++i) {
 
 		cin >> F;
-		friends.clear();
+		djs.init();
 
 		for (int j = 0; j < F; ++j) {
 
 			cin >> a >> b;
-
-			if (friends.find(a) == friends.end()) {
-
-				p.t = 1;
-				p.g = a;
-				friends[a] = p;
-			}
-
-			if (friends.find(b) == friends.end()) {
-
-				p.t = 1;
-				p.g = b;
-				friends[b] = p;
-			}
-
-			a = getRoot(a);
-			b = getRoot(b);
-			
-			if (a != b) {
-
-				friends[b].g = a;
-				friends[a].t += friends[b].t;
-			}
-
-			cout << friends[a].t << '\n';
+			djs.check(a);
+			djs.check(b);
+			cout << djs.unit(a, b) << '\n';
 		}
 	}
 
