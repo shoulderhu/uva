@@ -3,72 +3,89 @@
 
 using namespace std;
 
-struct person {
+class disjointSet {
 
-	int o, g;
-}p;
+	struct person {
 
-vector<person> persons;
+		int o, g;
+	}Person;
 
-int getRoot(int i) {
+	vector<person> P;
 
-	if (persons[i].g == i) { return i; }
-	else {
+public:
+	inline void init() {
 
-		return persons[i].g = getRoot(persons[i].g);
+		P.clear();
 	}
-}
+
+	inline void push(int o, int g) {
+
+		Person.o = o, Person.g = g;
+		P.push_back(Person);
+	}
+
+	inline int find(int p) {
+
+		if (P[p].g == p) { return p; }
+		else { return P[p].g = find(P[p].g); }
+	}
+
+	inline void unit(int x, int y) {
+
+		x = find(x), y = find(y);
+
+		if (x != y) {
+
+			P[y].g = x;
+			P[x].o += P[y].o;
+		}
+	}
+
+	inline bool check() {
+
+		for (int j = 0; j < P.size(); ++j) {
+
+			if (P[j].g == j && P[j].o != 0) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+}djs;
 
 int main() {
 
 	ios::sync_with_stdio(false);
 	cin.tie(0);
 
-	int N, n, m, x, y;
-	bool isPossible;
+	int N, n, m, o, x, y;
 
 	cin >> N;
 
 	for (int i = 0; i < N; ++i) {
 
 		cin >> n >> m;
-		persons.clear();
-		isPossible = true;
+		djs.init();
 
 		for (int j = 0; j < n; ++j) {
 
-			cin >> p.o;
-			p.g = j;
-			persons.push_back(p);
+			cin >> o;
+			djs.push(o, j);
 		}
 
 		for (int j = 0; j < m; ++j) {
 
 			cin >> x >> y;
-			x = getRoot(x);
-			y = getRoot(y);
-			
-			if (x != y) {
-
-				persons[y].g = x;
-				persons[x].o += persons[y].o;
-			}
+			djs.unit(x, y);
 		}
 
-		for (int j = 0; j < persons.size(); ++j) {
-
-			if (persons[j].g == j && persons[j].o != 0) {
-
-				cout << "IMPOSSIBLE\n";
-				isPossible = false;
-				break;
-			}
-		}
-
-		if (isPossible) {
+		if (djs.check()) {
 
 			cout << "POSSIBLE\n";
 		}
+		else { cout << "IMPOSSIBLE\n"; }
 	}
 
 	return 0;
